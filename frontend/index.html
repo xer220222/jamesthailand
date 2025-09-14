@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>出售房屋</title>
+  <link rel="icon" type="image/jpeg" href="/images/logo.jpg">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Noto Sans TC', Arial, sans-serif; background: #f7f7f7; }
+    .top { background: #fff; border-bottom: 1px solid #eee; }
+    .top1 { display: flex; align-items: center; justify-content: space-between; padding: 1rem 2rem; }
+    .logo img { height: 48px; }
+    .dh { background: #2d3a4b; }
+    .dh1 ul { list-style: none; margin: 0; padding: 0; display: flex; }
+    .dh1 ul li { position: relative; }
+    .dh1 ul li a { color: #fff; padding: 1rem 1.2rem; display: block; text-decoration: none; font-weight: 500; }
+    .dh1 ul li ul { display: none; position: absolute; left: 0; top: 100%; background: #fff; min-width: 140px; box-shadow: 0 2px 8px #0002; z-index: 10; }
+    .dh1 ul li:hover ul { display: block; }
+    .dh1 ul li ul li a { color: #2d3a4b; padding: 0.7rem 1.2rem; }
+
+    .lujing { background: #f5f5f5; padding: 0.7rem 2rem; color: #888; font-size: 0.95rem; }
+    .shuaix { background: #fff; padding: 1rem 2rem; border-bottom: 1px solid #eee; }
+    .shuaix table { width: 100%; margin-bottom: 0.5rem; }
+    .shuaix a { margin-right: 0.7em; color: #2d3a4b; text-decoration: none; }
+    .shuaix .changefieldandcss { color: #e67e22; font-weight: bold; }
+
+    .ls { display: flex; justify-content: center; }
+    .ls-l { flex: 1 1 0; max-width: 1000px; }
+
+    /* 新版房屋卡片：橫向排列 */
+    .house-card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px #0001;
+      overflow: hidden;
+      display: flex;
+      flex-direction: row;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      padding: 1rem;
+      align-items: flex-start;
+    }
+    .house-card img {
+      width: 240px;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+    .house-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .house-info h3 {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      color: #2d3a4b;
+    }
+    .house-info p {
+      margin: 0.3rem 0;
+      color: #555;
+      font-size: 0.95rem;
+    }
+    .house-info strong { color: #e67e22; }
+
+    .page { text-align: center; margin: 1.5rem 0; }
+    .page a, .page b { margin: 0 0.3em; color: #2d3a4b; text-decoration: none; }
+    .page b { font-weight: bold; color: #e67e22; }
+
+    .ft { background: #222; color: #ccc; padding: 2rem 0; margin-top: 2rem; }
+    .ft2 { max-width: 900px; margin: auto; }
+    .ft2-1 { margin-bottom: 1.5rem; }
+    .ft2-3 { display: flex; gap: 2rem; }
+    .ft2-3 img { width: 90px; height: 90px; border-radius: 8px; }
+
+    @media (max-width: 700px) {
+      .house-card { flex-direction: column; align-items: center; }
+      .house-card img { width: 100%; height: auto; }
+    }
+  </style>
+</head>
+
+<body>
+<div class="top">
+  <div class="top1">
+    <div class="logo">
+      <a href="main.html">
+        <img src="images/logo.jpg" alt="logo" />
+      </a>
+    </div>
+    <div class="bnan"></div>
+  </div>
+  <div class="dh">
+    <div class="dh1">
+      <ul id="jsddm">
+        <li><a href="main.html">首  頁</a></li>
+        <li><a href="#">出售房屋</a></li>
+        <li><a href="#">預留空格1</a></li>
+        <li><a href="#">預留空格2</a></li>
+        <li><a href="#">預留空格3</a></li>
+        <li><a href="#">關於我們</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="shuaix">
+  <table><tr><td><b>城市：</b><span id="cityFilterArea"></span></td></tr></table>
+  <table><tr><td><b>捷運站：</b><span id="mrtFilterArea"></span></td></tr></table>
+  <table><tr><td><b>房型：</b><span id="typeFilterArea"></span></td></tr></table>
+  <table><tr><td><b>排序：</b>
+    <a href="#" class="changefieldandcss" data-sort="completion_year">最新完工</a>
+    <a href="#" class="fieldandcss" data-sort="price_asc">價格由低到高</a>
+    <a href="#" class="fieldandcss" data-sort="price_desc">價格由高到低</a>
+    <a href="#" class="fieldandcss" data-sort="area_asc">面積由小到大</a>
+    <a href="#" class="fieldandcss" data-sort="area_desc">面積由大到小</a>
+  </td></tr></table>
+</div>
+
+<div class="ls">
+  <div class="ls-l">
+    <ul id="houseList" style="list-style:none;padding:0;"></ul>
+    <div class="page" id="pagination"></div>
+  </div>
+</div>
+
+<footer class="ft">
+  <div class="ft2">
+    <div class="ft2-1">
+      <p><strong>關於我們</strong> 聯絡電話：0912345678 泰國：87654321 郵件：abc@example.com</p>
+    </div>
+    <div class="ft2-3">
+      <span>Line：<br><img src="images/lineqr.jpg" alt="Line" /></span>
+      <span>微信：<br><img src="images/wechatqr.jpg" alt="微信" /></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+let allProjects = [];
+let currentPage = 1;
+let pageSize = 8;
+let currentCity = '';
+let currentType = '';
+let currentMrt = '';
+let currentSort = 'completion_year';
+
+function renderFilters(projects) {
+  // 城市
+  const citySet = new Set(projects.map(p => p.city).filter(Boolean));
+  let cityHtml = '';
+  cityHtml += `<a href="#" class="${currentCity===''?'changefieldandcss':'fieldandcss'}" data-city="">全部</a>`;
+  citySet.forEach(city => {
+    cityHtml += `<a href="#" class="${currentCity===city?'changefieldandcss':'fieldandcss'}" data-city="${city}">${city}</a>`;
+  });
+  document.getElementById('cityFilterArea').innerHTML = cityHtml;
+
+  // 房型
+  const typeSet = new Set(projects.map(p => p.house_type).filter(Boolean));
+  let typeHtml = `<a href="#" class="changefieldandcss" data-type="">不限</a>`;
+  typeSet.forEach(type => {
+    typeHtml += `<a href="#" class="fieldandcss" data-type="${type}">${type}</a>`;
+  });
+  document.getElementById('typeFilterArea').innerHTML = typeHtml;
+  // 捷運站（預設隱藏）
+  document.getElementById('mrtFilterArea').innerHTML = '';
+  document.getElementById('mrtFilterArea').parentElement.parentElement.style.display = 'none';
+  // 若城市為曼谷才顯示捷運站
+  if (currentCity === '曼谷') {
+    const mrtSet = new Set(projects.filter(p => p.city === '曼谷').map(p => p.mrt_station).filter(Boolean));
+    let mrtHtml = `<a href="#" class="changefieldandcss" data-mrt="">不限</a>`;
+    mrtSet.forEach(mrt => {
+      mrtHtml += `<a href="#" class="fieldandcss" data-mrt="${mrt}">${mrt}</a>`;
+    });
+    document.getElementById('mrtFilterArea').innerHTML = mrtHtml;
+    document.getElementById('mrtFilterArea').parentElement.parentElement.style.display = '';
+  }
+  
+
+}
+
+function renderList() {
+  let filtered = allProjects.filter(p =>
+    (!currentCity || p.city === currentCity) &&
+    (!currentType || p.house_type === currentType) &&
+    (!currentMrt || p.mrt_station === currentMrt)
+  );
+  if (currentSort === 'price_asc') filtered.sort((a,b)=>(a.price||0)-(b.price||0));
+  else if (currentSort === 'price_desc') filtered.sort((a,b)=>(b.price||0)-(a.price||0));
+  else if (currentSort === 'area_asc') filtered.sort((a,b)=>(a.area||0)-(b.area||0));
+  else if (currentSort === 'area_desc') filtered.sort((a,b)=>(b.area||0)-(a.area||0));
+  else filtered.sort((a,b)=>(b.completion_year||0)-(a.completion_year||0));
+
+  // 分頁
+  const total = filtered.length;
+  const totalPages = Math.ceil(total / pageSize);
+  if (currentPage > totalPages) currentPage = 1;
+  const pageData = filtered.slice((currentPage-1)*pageSize, currentPage*pageSize);
+
+  // 渲染
+  const list = document.getElementById('houseList');
+  list.innerHTML = '';
+  if (pageData.length === 0) {
+    list.innerHTML = '<div class="alert alert-warning w-100">查無建案資料</div>';
+    document.getElementById('pagination').innerHTML = '';
+    return;
+  }
+
+  pageData.forEach(p => {
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `house.html?name=${encodeURIComponent(p.name)}`;
+    link.style.textDecoration = 'none';
+    link.style.color = 'inherit';
+    link.innerHTML = `
+      <div class="house-card">
+        <img src="/uploads/${p.name.replace(/ /g, '_')}/1.jpg" alt="${p.name}" />
+        <div class="house-info">
+          <h3>${p.name}</h3>
+          <p>房型：${p.house_type || ''}</p>
+          <p>捷運站：${p.mrt_station || '無'}</p>
+          <p>面積：${p.area || ''} 平方米</p>
+          <p class="house-price"><strong>價格：${(p.price !== undefined && p.price !== null && p.price !== '' && !isNaN(Number(p.price))) ? Number(p.price).toLocaleString() + '元' : '洽詢'}</strong></p>
+        </div>
+      </div>
+    `;
+    li.appendChild(link);
+    list.appendChild(li);
+  });
+
+  // 分頁
+  let pageHtml = '';
+  for(let i=1;i<=totalPages;i++) {
+    if(i===currentPage) pageHtml += `<b>${i}</b>`;
+    else pageHtml += `<a href="#" data-page="${i}">${i}</a>`;
+  }
+  document.getElementById('pagination').innerHTML = pageHtml;
+}
+
+fetch('/api/houses')
+  .then(res => res.json())
+  .then(projects => {
+    allProjects = projects;
+    renderFilters(projects);
+    renderList();
+
+    // 篩選功能
+    document.getElementById('cityFilterArea').onclick = function(e) {
+      if(e.target.dataset.city!==undefined) {
+        currentCity = e.target.dataset.city;
+        currentPage = 1;
+        document.querySelectorAll('#cityFilterArea a').forEach(a=>a.className='fieldandcss');
+        e.target.className='changefieldandcss';
+        // 切換城市時重設捷運站篩選
+        currentMrt = '';
+        renderFilters(allProjects);
+        renderList();
+      }
+    };
+    document.getElementById('typeFilterArea').onclick = function(e) {
+      if(e.target.dataset.type!==undefined) {
+        currentType = e.target.dataset.type;
+        currentPage = 1;
+        document.querySelectorAll('#typeFilterArea a').forEach(a=>a.className='fieldandcss');
+        e.target.className='changefieldandcss';
+        renderList();
+      }
+    };
+    document.getElementById('mrtFilterArea').onclick = function(e) {
+      if(e.target.dataset.mrt!==undefined) {
+        currentMrt = e.target.dataset.mrt;
+        currentPage = 1;
+        document.querySelectorAll('#mrtFilterArea a').forEach(a=>a.className='fieldandcss');
+        e.target.className='changefieldandcss';
+        renderList();
+      }
+    };
+
+    document.querySelectorAll('.shuaix [data-sort]').forEach(a => {
+      a.onclick = function(e) {
+        e.preventDefault();
+        currentSort = a.dataset.sort;
+        document.querySelectorAll('.shuaix [data-sort]').forEach(x=>x.className='fieldandcss');
+        a.className='changefieldandcss';
+        renderList();
+      };
+    });
+    document.getElementById('pagination').onclick = function(e) {
+      if(e.target.dataset.page) {
+        currentPage = parseInt(e.target.dataset.page);
+        renderList();
+      }
+    };
+    
+  });
+</script>
+</body>
+</html>

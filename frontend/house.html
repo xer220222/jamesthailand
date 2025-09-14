@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>房屋資訊</title>
+  <link rel="icon" type="image/jpeg" href="/images/logo.jpg">
+  <style>
+    body { font-family: sans-serif; margin: 0; padding: 0; background: #f7f7f7; }
+  .container { max-width: 800px; margin: 2rem auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px #0001; padding: 2rem; }
+    .images { display: flex; gap: 1rem; overflow-x: auto; margin-bottom: 1rem; }
+    .images img { max-height: 200px; border-radius: 6px; }
+    h1 { margin-top: 0; }
+    .price { color: #e67e22; font-size: 1.5rem; margin: 1rem 0; }
+    .address { color: #888; margin-bottom: 1rem; }
+    @media (max-width: 700px) {
+      .container { padding: 1rem; }
+      .images img { max-height: 120px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <button onclick="window.location.href='index.html'" style="margin-bottom:1rem;" class="btn btn-secondary">← 返回</button>
+    <div class="images" id="images"></div>
+    <h1 id="title"></h1>
+    <div class="price" id="price"></div>
+    <div class="address" id="address"></div>
+  <div id="mainInfo"></div>
+  <div id="map" style="margin-top:1.5rem;"></div>
+  <div id="description" style="margin-top:1.5rem;"></div>
+  </div>
+  <script>
+  // 取得網址參數 name
+  const urlParams = new URLSearchParams(window.location.search);
+  const name = urlParams.get('name');
+
+  // 以 name 查詢（用 /api/houses?name=xxx，回傳陣列，取第一筆）
+  if (name) {
+    fetch(`/api/houses?name=${encodeURIComponent(name)}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.length === 0) {
+          document.getElementById('title').innerText = '找不到該房屋';
+          return;
+        }
+        const house = data[0];
+  document.getElementById('title').innerText = house.name;
+  document.title = house.name + ' - 房屋資訊';
+        document.getElementById('price').innerText = house.price ? `價格：${Number(house.price).toLocaleString()}元` : '價格：洽詢';
+        document.getElementById('address').innerText = `${house.city || ''} ${house.address || ''}`;
+        document.getElementById('description').innerText = house.description || '';
+
+        // 顯示主要欄位
+  let infoHtml = '<table style="width:100%;border-collapse:collapse;margin-top:1rem;">';
+  const thStyle = 'style="white-space:nowrap;width:110px;padding-right:1em;vertical-align:top;"';
+  infoHtml += `<tr><td ${thStyle}><b>建案類型</b></td><td>${house.property_type||''}</td></tr>`;
+  infoHtml += `<tr><td ${thStyle}><b>完工年</b></td><td>${house.completion_year||''}</td></tr>`;
+  infoHtml += `<tr><td ${thStyle}><b>面積</b></td><td>${house.area ? house.area + ' 平方米' : ''}</td></tr>`;
+  infoHtml += `<tr><td ${thStyle}><b>開發商</b></td><td>${house.developer||''}</td></tr>`;
+  infoHtml += `<tr><td ${thStyle}><b>房型</b></td><td>${house.house_type||''}</td></tr>`;
+  if(house.mrt_station){ infoHtml += `<tr><td ${thStyle}><b>捷運站</b></td><td>${house.mrt_station}</td></tr>`; }
+  infoHtml += `<tr><td ${thStyle}><b>設施</b></td><td>${house.facilities||''}</td></tr>`;
+  infoHtml += `<tr><td ${thStyle}><b>周邊</b></td><td>${house.surroundings||''}</td></tr>`;
+  infoHtml += `<tr><td ${thStyle}><b>交通</b></td><td>${house.transportation||''}</td></tr>`;
+  infoHtml += `<tr><td ${thStyle}><b>單位/樓高/車位</b></td><td>${house.unit_floor_parking||''}</td></tr>`;
+  infoHtml += '</table>';
+
+        // Google Map 連結與地圖
+        let mapHtml = '';
+        if (house.location) {
+          mapHtml += `<div style="margin:1.2em 0 0.5em 0;"><b>地圖：</b><a href="${house.location}" target="_blank" style="color:#1976d2;text-decoration:underline;">在地圖開啟</a></div>`;
+        }
+        document.getElementById('mainInfo').innerHTML = infoHtml;
+        document.getElementById('map').innerHTML = mapHtml;
+
+        // 多圖輪播
+        const imagesDiv = document.getElementById('images');
+        const folder = house.name.replace(/ /g, '_');
+        let imgIndex = 1;
+        let found = false;
+        function tryLoadImg(idx) {
+          const img = new Image();
+          img.src = `/uploads/${folder}/${idx}.jpg`;
+          img.onload = function() {
+            found = true;
+            addImg(idx);
+            tryLoadImg(idx+1);
+          };
+          img.onerror = function() {
+            if(idx === 1 && !found) {
+              // 沒有任何圖片
+              imagesDiv.innerHTML = '<div style="color:#888">無圖片</div>';
+            } else if(idx > 2) {
+              // 輪播功能
+              setupCarousel();
+            }
+          };
+        }
+        let imgList = [];
+        function addImg(idx) {
+          const img = document.createElement('img');
+          img.src = `/uploads/${folder}/${idx}.jpg`;
+          img.alt = '房屋圖片'+idx;
+          imgList.push(img);
+          imagesDiv.appendChild(img);
+        }
+        function setupCarousel() {
+          if(imgList.length <= 1) return;
+          let current = 0;
+          imagesDiv.innerHTML = '';
+          const imgBox = document.createElement('div');
+          imgBox.style.position = 'relative';
+          imgBox.style.display = 'flex';
+          imgBox.style.alignItems = 'center';
+          imgBox.style.justifyContent = 'center';
+          imgBox.style.width = '100%';
+          imgBox.style.overflow = 'hidden';
+          const img = imgList[0];
+          imgBox.appendChild(img);
+          // 左右按鈕
+          const leftBtn = document.createElement('button');
+          leftBtn.innerText = '‹';
+          leftBtn.style.position = 'absolute';
+          leftBtn.style.left = '0';
+          leftBtn.style.top = '50%';
+          leftBtn.style.transform = 'translateY(-50%)';
+          leftBtn.style.background = 'rgba(0,0,0,0.3)';
+          leftBtn.style.color = '#fff';
+          leftBtn.style.border = 'none';
+          leftBtn.style.fontSize = '2rem';
+          leftBtn.style.cursor = 'pointer';
+          leftBtn.style.height = '2.2rem';
+          leftBtn.style.width = '2.2rem';
+          leftBtn.style.borderRadius = '50%';
+          leftBtn.onclick = function() {
+            current = (current-1+imgList.length)%imgList.length;
+            imgBox.replaceChild(imgList[current], imgBox.firstChild);
+          };
+          const rightBtn = document.createElement('button');
+          rightBtn.innerText = '›';
+          rightBtn.style.position = 'absolute';
+          rightBtn.style.right = '0';
+          rightBtn.style.top = '50%';
+          rightBtn.style.transform = 'translateY(-50%)';
+          rightBtn.style.background = 'rgba(0,0,0,0.3)';
+          rightBtn.style.color = '#fff';
+          rightBtn.style.border = 'none';
+          rightBtn.style.fontSize = '2rem';
+          rightBtn.style.cursor = 'pointer';
+          rightBtn.style.height = '2.2rem';
+          rightBtn.style.width = '2.2rem';
+          rightBtn.style.borderRadius = '50%';
+          rightBtn.onclick = function() {
+            current = (current+1)%imgList.length;
+            imgBox.replaceChild(imgList[current], imgBox.firstChild);
+          };
+          imgBox.appendChild(leftBtn);
+          imgBox.appendChild(rightBtn);
+          imagesDiv.appendChild(imgBox);
+        }
+        tryLoadImg(1);
+      })
+      .catch(err => {
+        console.error(err);
+        document.getElementById('title').innerText = '載入房屋資料時發生錯誤';
+      });
+  } else {
+    document.getElementById('title').innerText = '未提供房屋名稱參數';
+  }
+  </script>
+</body>
+</html>

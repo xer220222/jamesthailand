@@ -1,0 +1,70 @@
+# Docker Compose file
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend/
+      dockerfile: Dockerfile
+    container_name: backend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    volumes:
+      - ./backend/uploads:/app/uploads     # 上傳圖片持久化
+      - ./frontend:/frontend               # 掛載前端，Node.js 能讀到 main.html
+    environment:
+      - DB_HOST=db
+      - DB_USER=admin
+      - DB_PASSWORD=12345678
+      - DB_NAME=house
+      - LANG=C.UTF-8
+      - LC_ALL=C.UTF-8
+      - MYSQL_ROOT_PASSWORD=12345678
+    networks:
+      - app-network
+
+
+
+  db:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345678
+      MYSQL_DATABASE: house
+      MYSQL_CHARSET: utf8mb4  # 新增這行
+      MYSQL_COLLATION: utf8mb4_unicode_ci  # 新增這行
+    ports:
+      - "3307:3306"   # 避免跟本機 MySQL 衝突
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql  # 初始化 SQL
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    networks:
+      - app-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    restart: always
+    ports:
+      - "8080:80"
+    environment:
+      - PMA_HOST=db
+      - PMA_USER=admin
+      - PMA_PASSWORD=12345678
+      - PMA_CHARSET=utf8mb4
+      - MYSQL_CHARSET=utf8mb4
+      - PMA_COLLATION_CONNECTION=utf8mb4_unicode_ci 
+    depends_on:
+      - db
+    networks:
+      - app-network
+volumes:
+  mysql_data:  
+
+networks:
+  app-network:
+    driver: bridge
