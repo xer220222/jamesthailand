@@ -4,8 +4,8 @@ npm-debug.log
 yarn-error.log
 
 # Docker
-*.sql
-docker-compose.override.yml
+# 移除 *.sql，改為忽略其他 SQL 檔案，允許 init.sql 被追蹤
+!init.sql
 
 # Logs
 logs/
