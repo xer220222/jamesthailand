@@ -5,7 +5,6 @@ yarn-error.log
 
 # Docker
 *.sql
-mysql_data/
 docker-compose.override.yml
 
 # Logs
