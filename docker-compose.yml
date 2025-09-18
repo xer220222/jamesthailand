@@ -18,7 +18,7 @@ services:
       - DB_HOST=db
       - DB_USER=admin
       - DB_PASSWORD=12345678
-      - DB_NAME=house
+      - DB_NAME=object
       - LANG=C.UTF-8
       - LC_ALL=C.UTF-8
       - MYSQL_ROOT_PASSWORD=12345678
@@ -33,7 +33,7 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: 12345678
-      MYSQL_DATABASE: house
+      MYSQL_DATABASE: object
       MYSQL_CHARSET: utf8mb4  # 新增這行
       MYSQL_COLLATION: utf8mb4_unicode_ci  # 新增這行
     ports:

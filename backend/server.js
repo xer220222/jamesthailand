@@ -13,11 +13,11 @@ app.get('/', (req, res) => {
 }
 );
 
-// 前端靜態檔案 (main.html, house.html,index.html)
+// 前端靜態檔案 (main.html, object.html,index.html)
 app.use(express.static(path.join(__dirname, '../frontend')));
 
 // API 路由
-app.use('/api/houses', require('./routes/houses'));
+app.use('/api/objects', require('./routes/objects'));
 app.use('/uploads', express.static('uploads'));
 
 

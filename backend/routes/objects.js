@@ -1,5 +1,5 @@
 
-// backend/routes/houses.js
+// backend/routes/objects.js
 // 房屋相關 API 路由
 const express = require('express');
 const router = express.Router();
@@ -10,7 +10,7 @@ const pool = mysql.createPool({
   host: process.env.DB_HOST || 'localhost',
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || '12345678',
-  database: process.env.DB_NAME || 'house',
+  database: process.env.DB_NAME || 'object',
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
@@ -18,7 +18,7 @@ const pool = mysql.createPool({
 });
 
 
-// 取得所有房屋（支援查詢參數：city, house_type, sort）
+// 取得所有房屋（支援查詢參數：city, object_type, sort）
 router.get('/', (req, res) => {
   // 這裡用 projects 表，請依你的實際表名調整
   let sql = 'SELECT * FROM projects';
@@ -30,9 +30,9 @@ router.get('/', (req, res) => {
     where.push('city = ?');
     params.push(req.query.city);
   }
-  if (req.query.house_type) {
-    where.push('house_type = ?');
-    params.push(req.query.house_type);
+  if (req.query.object_type) {
+    where.push('object_type = ?');
+    params.push(req.query.object_type);
   }
   if (req.query.name) {
   where.push('name = ?');

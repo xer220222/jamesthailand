@@ -30,7 +30,7 @@
     .ls-l { flex: 1 1 0; max-width: 1000px; }
 
     /* 新版房屋卡片：橫向排列 */
-    .house-card {
+    .object-card {
       background: #fff;
       border-radius: 8px;
       box-shadow: 0 2px 8px #0001;
@@ -42,31 +42,31 @@
       padding: 1rem;
       align-items: flex-start;
     }
-    .house-card img {
+    .object-card img {
       width: 240px;
       height: 160px;
       object-fit: cover;
       border-radius: 6px;
       flex-shrink: 0;
     }
-    .house-info {
+    .object-info {
       flex: 1;
       display: flex;
       flex-direction: column;
       justify-content: center;
     }
-    .house-info h3 {
+    .object-info h3 {
       font-size: 1.2rem;
       font-weight: bold;
       margin-bottom: 0.5rem;
       color: #2d3a4b;
     }
-    .house-info p {
+    .object-info p {
       margin: 0.3rem 0;
       color: #555;
       font-size: 0.95rem;
     }
-    .house-info strong { color: #e67e22; }
+    .object-info strong { color: #e67e22; }
 
     .page { text-align: center; margin: 1.5rem 0; }
     .page a, .page b { margin: 0 0.3em; color: #2d3a4b; text-decoration: none; }
@@ -79,8 +79,8 @@
     .ft2-3 img { width: 90px; height: 90px; border-radius: 8px; }
 
     @media (max-width: 700px) {
-      .house-card { flex-direction: column; align-items: center; }
-      .house-card img { width: 100%; height: auto; }
+      .object-card { flex-direction: column; align-items: center; }
+      .object-card img { width: 100%; height: auto; }
     }
   </style>
 </head>
@@ -124,7 +124,7 @@
 
 <div class="ls">
   <div class="ls-l">
-    <ul id="houseList" style="list-style:none;padding:0;"></ul>
+    <ul id="objectList" style="list-style:none;padding:0;"></ul>
     <div class="page" id="pagination"></div>
   </div>
 </div>
@@ -161,7 +161,7 @@ function renderFilters(projects) {
   document.getElementById('cityFilterArea').innerHTML = cityHtml;
 
   // 房型
-  const typeSet = new Set(projects.map(p => p.house_type).filter(Boolean));
+  const typeSet = new Set(projects.map(p => p.object_type).filter(Boolean));
   let typeHtml = `<a href="#" class="changefieldandcss" data-type="">不限</a>`;
   typeSet.forEach(type => {
     typeHtml += `<a href="#" class="fieldandcss" data-type="${type}">${type}</a>`;
@@ -187,7 +187,7 @@ function renderFilters(projects) {
 function renderList() {
   let filtered = allProjects.filter(p =>
     (!currentCity || p.city === currentCity) &&
-    (!currentType || p.house_type === currentType) &&
+    (!currentType || p.object_type === currentType) &&
     (!currentMrt || p.mrt_station === currentMrt)
   );
   if (currentSort === 'price_asc') filtered.sort((a,b)=>(a.price||0)-(b.price||0));
@@ -203,7 +203,7 @@ function renderList() {
   const pageData = filtered.slice((currentPage-1)*pageSize, currentPage*pageSize);
 
   // 渲染
-  const list = document.getElementById('houseList');
+  const list = document.getElementById('objectList');
   list.innerHTML = '';
   if (pageData.length === 0) {
     list.innerHTML = '<div class="alert alert-warning w-100">查無建案資料</div>';
@@ -214,18 +214,18 @@ function renderList() {
   pageData.forEach(p => {
     const li = document.createElement('li');
     const link = document.createElement('a');
-    link.href = `house.html?name=${encodeURIComponent(p.name)}`;
+    link.href = `object.html?name=${encodeURIComponent(p.name)}`;
     link.style.textDecoration = 'none';
     link.style.color = 'inherit';
     link.innerHTML = `
-      <div class="house-card">
+      <div class="object-card">
         <img src="/uploads/${p.name.replace(/ /g, '_')}/1.jpg" alt="${p.name}" />
-        <div class="house-info">
+        <div class="object-info">
           <h3>${p.name}</h3>
-          <p>房型：${p.house_type || ''}</p>
+          <p>房型：${p.object_type || ''}</p>
           <p>捷運站：${p.mrt_station || '無'}</p>
           <p>面積：${p.area || ''} 平方米</p>
-          <p class="house-price"><strong>價格：${(p.price !== undefined && p.price !== null && p.price !== '' && !isNaN(Number(p.price))) ? Number(p.price).toLocaleString() + '元' : '洽詢'}</strong></p>
+          <p class="object-price"><strong>價格：${(p.price !== undefined && p.price !== null && p.price !== '' && !isNaN(Number(p.price))) ? Number(p.price).toLocaleString() + '元' : '洽詢'}</strong></p>
         </div>
       </div>
     `;
@@ -242,7 +242,7 @@ function renderList() {
   document.getElementById('pagination').innerHTML = pageHtml;
 }
 
-fetch('/api/houses')
+fetch('/api/objects')
   .then(res => res.json())
   .then(projects => {
     allProjects = projects;

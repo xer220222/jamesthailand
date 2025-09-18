@@ -35,48 +35,48 @@
   const urlParams = new URLSearchParams(window.location.search);
   const name = urlParams.get('name');
 
-  // 以 name 查詢（用 /api/houses?name=xxx，回傳陣列，取第一筆）
+  // 以 name 查詢（用 /api/objects?name=xxx，回傳陣列，取第一筆）
   if (name) {
-    fetch(`/api/houses?name=${encodeURIComponent(name)}`)
+    fetch(`/api/objects?name=${encodeURIComponent(name)}`)
       .then(res => res.json())
       .then(data => {
         if (data.length === 0) {
           document.getElementById('title').innerText = '找不到該房屋';
           return;
         }
-        const house = data[0];
-  document.getElementById('title').innerText = house.name;
-  document.title = house.name + ' - 房屋資訊';
-        document.getElementById('price').innerText = house.price ? `價格：${Number(house.price).toLocaleString()}元` : '價格：洽詢';
-        document.getElementById('address').innerText = `${house.city || ''} ${house.address || ''}`;
-        document.getElementById('description').innerText = house.description || '';
+        const object = data[0];
+  document.getElementById('title').innerText = object.name;
+  document.title = object.name + ' - 房屋資訊';
+        document.getElementById('price').innerText = object.price ? `價格：${Number(object.price).toLocaleString()}元` : '價格：洽詢';
+        document.getElementById('address').innerText = `${object.city || ''} ${object.address || ''}`;
+        document.getElementById('description').innerText = object.description || '';
 
         // 顯示主要欄位
   let infoHtml = '<table style="width:100%;border-collapse:collapse;margin-top:1rem;">';
   const thStyle = 'style="white-space:nowrap;width:110px;padding-right:1em;vertical-align:top;"';
-  infoHtml += `<tr><td ${thStyle}><b>建案類型</b></td><td>${house.property_type||''}</td></tr>`;
-  infoHtml += `<tr><td ${thStyle}><b>完工年</b></td><td>${house.completion_year||''}</td></tr>`;
-  infoHtml += `<tr><td ${thStyle}><b>面積</b></td><td>${house.area ? house.area + ' 平方米' : ''}</td></tr>`;
-  infoHtml += `<tr><td ${thStyle}><b>開發商</b></td><td>${house.developer||''}</td></tr>`;
-  infoHtml += `<tr><td ${thStyle}><b>房型</b></td><td>${house.house_type||''}</td></tr>`;
-  if(house.mrt_station){ infoHtml += `<tr><td ${thStyle}><b>捷運站</b></td><td>${house.mrt_station}</td></tr>`; }
-  infoHtml += `<tr><td ${thStyle}><b>設施</b></td><td>${house.facilities||''}</td></tr>`;
-  infoHtml += `<tr><td ${thStyle}><b>周邊</b></td><td>${house.surroundings||''}</td></tr>`;
-  infoHtml += `<tr><td ${thStyle}><b>交通</b></td><td>${house.transportation||''}</td></tr>`;
-  infoHtml += `<tr><td ${thStyle}><b>單位/樓高/車位</b></td><td>${house.unit_floor_parking||''}</td></tr>`;
+  infoHtml += `<tr><td ${thStyle}><b>建案類型</b></td><td>${object.property_type||''}</td></tr>`;
+  infoHtml += `<tr><td ${thStyle}><b>完工年</b></td><td>${object.completion_year||''}</td></tr>`;
+  infoHtml += `<tr><td ${thStyle}><b>面積</b></td><td>${object.area ? object.area + ' 平方米' : ''}</td></tr>`;
+  infoHtml += `<tr><td ${thStyle}><b>開發商</b></td><td>${object.developer||''}</td></tr>`;
+  infoHtml += `<tr><td ${thStyle}><b>房型</b></td><td>${object.object_type||''}</td></tr>`;
+  if(object.mrt_station){ infoHtml += `<tr><td ${thStyle}><b>捷運站</b></td><td>${object.mrt_station}</td></tr>`; }
+  infoHtml += `<tr><td ${thStyle}><b>設施</b></td><td>${object.facilities||''}</td></tr>`;
+  infoHtml += `<tr><td ${thStyle}><b>周邊</b></td><td>${object.surroundings||''}</td></tr>`;
+  infoHtml += `<tr><td ${thStyle}><b>交通</b></td><td>${object.transportation||''}</td></tr>`;
+  infoHtml += `<tr><td ${thStyle}><b>單位/樓高/車位</b></td><td>${object.unit_floor_parking||''}</td></tr>`;
   infoHtml += '</table>';
 
         // Google Map 連結與地圖
         let mapHtml = '';
-        if (house.location) {
-          mapHtml += `<div style="margin:1.2em 0 0.5em 0;"><b>地圖：</b><a href="${house.location}" target="_blank" style="color:#1976d2;text-decoration:underline;">在地圖開啟</a></div>`;
+        if (object.location) {
+          mapHtml += `<div style="margin:1.2em 0 0.5em 0;"><b>地圖：</b><a href="${object.location}" target="_blank" style="color:#1976d2;text-decoration:underline;">在地圖開啟</a></div>`;
         }
         document.getElementById('mainInfo').innerHTML = infoHtml;
         document.getElementById('map').innerHTML = mapHtml;
 
         // 多圖輪播
         const imagesDiv = document.getElementById('images');
-        const folder = house.name.replace(/ /g, '_');
+        const folder = object.name.replace(/ /g, '_');
         let imgIndex = 1;
         let found = false;
         function tryLoadImg(idx) {
