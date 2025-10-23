@@ -7,8 +7,8 @@ const mysql = require('mysql2');
 
 // 建立 MySQL 連線池（請依你的資料庫設定調整）
 const pool = mysql.createPool({
-  host: process.env.DB_HOST || 'localhost',
-  user: process.env.DB_USER || 'root',
+  host: process.env.DB_HOST || 'mysql',
+  user: process.env.DB_USER || 'admin',
   password: process.env.DB_PASSWORD || '12345678',
   database: process.env.DB_NAME || 'object',
   waitForConnections: true,
