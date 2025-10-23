@@ -29,6 +29,7 @@ services:
 
   db:
     image: mysql:5.7
+    platform: linux/x86_64
     container_name: mysql
     restart: always
     environment:
@@ -47,6 +48,7 @@ services:
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
+    platform: linux/x86_64
     container_name: phpmyadmin
     restart: always
     ports:

@@ -27,9 +27,10 @@ CREATE TABLE `projects` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- 建立 phpMyAdmin 專用帳號
-CREATE USER 'admin'@'%' IDENTIFIED BY '12345678';
-GRANT ALL PRIVILEGES ON *.* TO 'admin' WITH GRANT OPTION;
+CREATE USER IF NOT EXISTS 'admin'@'%' IDENTIFIED BY '12345678';
+GRANT ALL PRIVILEGES ON object.* TO 'admin'@'%' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
+
 --
 -- 資料表的匯出資料 `projects`
 --
