@@ -24,12 +24,9 @@ CREATE TABLE `projects` (
   `price` decimal(15,2) DEFAULT NULL COMMENT '價格',
   `area` decimal(10,2) DEFAULT NULL COMMENT '面積',
   `description` text COMMENT '建案簡介'
+  PRIMARY KEY (`project_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 建立 phpMyAdmin 專用帳號
-CREATE USER 'admin'@'%' IDENTIFIED BY '12345678';
-GRANT ALL PRIVILEGES ON *.* TO 'admin' WITH GRANT OPTION;
-FLUSH PRIVILEGES;
 --
 -- 資料表的匯出資料 `projects`
 --

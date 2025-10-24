@@ -16,7 +16,7 @@ services:
       - ./frontend:/frontend               # 掛載前端，Node.js 能讀到 main.html
     environment:
       - DB_HOST=db
-      - DB_USER=admin
+      - DB_USER=root
       - DB_PASSWORD=12345678
       - DB_NAME=object
       - LANG=C.UTF-8
@@ -29,6 +29,7 @@ services:
 
   db:
     image: mysql:5.7
+    platform: linux/x86_64
     container_name: mysql
     restart: always
     environment:
@@ -47,13 +48,14 @@ services:
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
+    platform: linux/x86_64
     container_name: phpmyadmin
     restart: always
     ports:
-      - "8080:80"
+      - "8888:80"
     environment:
       - PMA_HOST=db
-      - PMA_USER=admin
+      - PMA_USER=root
       - PMA_PASSWORD=12345678
       - PMA_CHARSET=utf8mb4
       - MYSQL_CHARSET=utf8mb4
